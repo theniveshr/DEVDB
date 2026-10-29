@@ -340,12 +340,18 @@ def classify_deterministic(request: str, existing_entities: Optional[List[str]] 
         entity = query_match.group(1)
         query_stopwords = {
             "table", "tables", "collection", "collections", "schema", "relationships",
-            "database", "connections", "profiles", "history", "capabilities"
+            "database", "connections", "profiles", "history", "capabilities",
+            "top", "first", "last", "some", "the", "a", "an", "few", "any", "all"
         }
         if entity not in query_stopwords:
             if entity == "users" and not has_users_table:
                 pass
             else:
+                if existing_entities:
+                    resolved_e = resolve_entity_name(entity, existing_entities)
+                    if not resolved_e:
+                        return None
+                    entity = resolved_e
                 return IntentClassification(
                     intent="query",
                     target_entity=entity,

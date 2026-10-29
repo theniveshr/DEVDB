@@ -109,6 +109,10 @@ class ConnectionManager:
     def __init__(self, profiles_file: Path = PROFILES_FILE):
         self.profiles_file = profiles_file
 
+    @property
+    def profiles_path(self) -> Path:
+        return self.profiles_file
+
     def _ensure_dir(self) -> None:
         self.profiles_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -129,12 +133,13 @@ class ConnectionManager:
         environment: str = "dev",
         default_mode: Optional[str] = None,
         conn_type: Optional[str] = None,
+        profile_type: Optional[str] = None,
     ) -> ConnectionProfile:
         """
         Save a profile ensuring NO password is written to profiles.json.
         """
         clean_url, _ = sanitize_url_for_storage(url)
-        c_type = conn_type or detect_connection_type(clean_url)
+        c_type = conn_type or profile_type or detect_connection_type(clean_url)
         mode = default_mode or get_default_mode_for_type(c_type)
         env_label = "sandbox" if environment.lower() == "sandbox" else "dev"
 

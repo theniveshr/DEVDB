@@ -449,10 +449,10 @@ class DevDBSession:
 
         prof = default_connection_manager.save_profile(
             name=clean_name,
-            url=self.url,
-            profile_type=ptype,
+            url=self.url or "",
             environment=env_label,
             default_mode=default_m,
+            conn_type=ptype,
         )
         self.active_profile_name = prof.name
         console.print(Panel(
