@@ -1,0 +1,91 @@
+{
+  "db_type": "sqlite",
+  "has_foreign_keys": false,
+  "description": "Gym and fitness center tracking members, trainers, sessions, and workouts",
+  "tables": {
+    "members": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "member_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "plan",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "joined_date",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "trainers": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "trainer_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "specialty",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "gym_classes": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "class_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "trainer_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": true
+        },
+        {
+          "name": "capacity",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    }
+  }
+}

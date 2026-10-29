@@ -1,0 +1,109 @@
+{
+  "db_type": "postgres",
+  "has_foreign_keys": false,
+  "description": "Logistics inventory tracking parts, suppliers, stock quantities, and transfers",
+  "tables": {
+    "warehouse_items": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "sku",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "item_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "warehouse_zone",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "suppliers": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "supplier_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "contact_email",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "country",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": true
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "transfers": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "item_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "from_zone",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "to_zone",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    }
+  }
+}

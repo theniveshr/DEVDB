@@ -1,0 +1,109 @@
+{
+  "db_type": "sqlite",
+  "has_foreign_keys": false,
+  "description": "Property listing network with properties, agents, buyers, tours (unconstrained)",
+  "tables": {
+    "properties": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "title",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "city",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "price",
+          "type": "REAL",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "bedrooms",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "agent_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": true
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "agents": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "agent_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "phone",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "license_number",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "tours": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "property_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "client_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "tour_date",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    }
+  }
+}

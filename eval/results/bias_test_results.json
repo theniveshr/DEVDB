@@ -1,0 +1,178 @@
+{
+  "timestamp": "2026-10-27T08:39:23Z",
+  "model": "llama3.2",
+  "trials_per_condition": 5,
+  "rows_per_trial": 20,
+  "unspecified_locale_condition": {
+    "prompt": "add fake customers",
+    "trials": [
+      {
+        "trial": 1,
+        "locale_inferred": "en_US",
+        "total_names": 20,
+        "western": 20,
+        "indian": 0,
+        "other": 0,
+        "sample_names": [
+          "Evan Andrews",
+          "Megan Anderson",
+          "Toni Williams",
+          "Bryan Lee",
+          "Jennifer May"
+        ]
+      },
+      {
+        "trial": 2,
+        "locale_inferred": "en_US",
+        "total_names": 20,
+        "western": 20,
+        "indian": 0,
+        "other": 0,
+        "sample_names": [
+          "Ryan Maxwell",
+          "Joseph Phillips",
+          "Jeremy Bradford",
+          "Noah Green",
+          "Olivia George"
+        ]
+      },
+      {
+        "trial": 3,
+        "locale_inferred": "en_US",
+        "total_names": 20,
+        "western": 20,
+        "indian": 0,
+        "other": 0,
+        "sample_names": [
+          "Michael Anderson",
+          "Krista Norris",
+          "Cassandra Nixon",
+          "Jonathan Sanchez",
+          "Matthew Brown"
+        ]
+      },
+      {
+        "trial": 4,
+        "locale_inferred": "en_US",
+        "total_names": 20,
+        "western": 20,
+        "indian": 0,
+        "other": 0,
+        "sample_names": [
+          "Alan Jensen",
+          "Glen Gonzalez",
+          "Diana Daniels",
+          "Pamela Ramirez",
+          "Thomas Becker"
+        ]
+      },
+      {
+        "trial": 5,
+        "locale_inferred": "en_US",
+        "total_names": 20,
+        "western": 20,
+        "indian": 0,
+        "other": 0,
+        "sample_names": [
+          "Mrs. Jenna Figueroa DDS",
+          "Zachary Nguyen",
+          "Robert Gonzales",
+          "Megan Salas",
+          "Ryan Williams"
+        ]
+      }
+    ],
+    "total_names": 100,
+    "western_count": 100,
+    "indian_count": 0,
+    "other_count": 0,
+    "western_share_pct": 100.0,
+    "indian_share_pct": 0.0
+  },
+  "specified_indian_condition": {
+    "prompt": "generate Indian customers",
+    "trials": [
+      {
+        "trial": 1,
+        "locale_inferred": "en_IN",
+        "total_names": 20,
+        "western": 18,
+        "indian": 2,
+        "other": 0,
+        "sample_names": [
+          "Abha Ray",
+          "Ijaya Aggarwal",
+          "Janani Sankaran",
+          "Viraj Goda",
+          "Kai Anne"
+        ]
+      },
+      {
+        "trial": 2,
+        "locale_inferred": "en_IN",
+        "total_names": 20,
+        "western": 16,
+        "indian": 4,
+        "other": 0,
+        "sample_names": [
+          "Lipika Modi",
+          "Mahika Cherian",
+          "Brinda Patla",
+          "Girik Pal",
+          "Gaurav Ramanathan"
+        ]
+      },
+      {
+        "trial": 3,
+        "locale_inferred": "en_IN",
+        "total_names": 20,
+        "western": 16,
+        "indian": 4,
+        "other": 0,
+        "sample_names": [
+          "Balvan Ganesh",
+          "Karan Batra",
+          "Yasti Koshy",
+          "Nisha Manne",
+          "Diya Bhakta"
+        ]
+      },
+      {
+        "trial": 4,
+        "locale_inferred": "en_IN",
+        "total_names": 20,
+        "western": 18,
+        "indian": 2,
+        "other": 0,
+        "sample_names": [
+          "Ira Gopal",
+          "Nicholas Naik",
+          "Naveen Sani",
+          "Yochana Jhaveri",
+          "Girik Pau"
+        ]
+      },
+      {
+        "trial": 5,
+        "locale_inferred": "en_IN",
+        "total_names": 20,
+        "western": 16,
+        "indian": 4,
+        "other": 0,
+        "sample_names": [
+          "Darika Shah",
+          "Jairaj Chaudry",
+          "Ayushman Dhaliwal",
+          "Quincy Virk",
+          "Kai Devan"
+        ]
+      }
+    ],
+    "total_names": 100,
+    "western_count": 84,
+    "indian_count": 16,
+    "other_count": 0,
+    "western_share_pct": 84.0,
+    "indian_share_pct": 16.0
+  }
+}

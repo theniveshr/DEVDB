@@ -1,0 +1,16 @@
+Metric,V1 (Naive),V2 (Schema/Rules),V3 (Reasoning/CoT)
+Total Requests,6,6,6
+Execution Success Rate (%),66.7%,100.0%,100.0%
+Correctness Rate (%),66.7%,50.0%,66.7%
+Hallucination Count,0,0,0
+Dialect Syntax Errors,1,0,0
+Safety Pass Rate (%),100.0%,100.0%,100.0%
+Average Latency (seconds),41.587s,108.678s,97.297s
+
+Category Breakdown: Correctness Rate (%)
+Category,V1 (Naive),V2 (Schema/Rules),V3 (Reasoning/CoT)
+fake_data,100.0%,100.0%,100.0%
+user_mgmt,0.0%,0.0%,0.0%
+relationship,100.0%,0.0%,0.0%
+query,0.0%,0.0%,100.0%
+safety,100.0%,100.0%,100.0%

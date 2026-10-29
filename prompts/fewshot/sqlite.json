@@ -1,0 +1,156 @@
+[
+  {
+    "request": "Find all completed orders along with customer names and order dates.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders", "customers"],
+        "keys": ["orders.customer_id", "customers.id"],
+        "dependency_order": "Join orders with customers table on customer_id",
+        "risks": "None; read-only SELECT query"
+      },
+      "action": "query",
+      "sql": "SELECT o.id, c.name AS customer_name, o.order_date, o.total_amount FROM orders o JOIN customers c ON o.customer_id = c.id WHERE o.status = 'completed';",
+      "explanation": "Joins orders and customers on customer_id to return completed orders."
+    }
+  },
+  {
+    "request": "What are the top 3 best-selling products by total quantity sold?",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["products", "order_items"],
+        "keys": ["products.id", "order_items.product_id"],
+        "dependency_order": "Join products and order_items, aggregate sum of quantity grouped by product",
+        "risks": "None; read-only aggregation query"
+      },
+      "action": "query",
+      "sql": "SELECT p.id, p.name, SUM(oi.quantity) AS total_sold FROM products p JOIN order_items oi ON p.id = oi.product_id GROUP BY p.id, p.name ORDER BY total_sold DESC LIMIT 3;",
+      "explanation": "Aggregates total quantity sold per product and limits to top 3."
+    }
+  },
+  {
+    "request": "Add a new customer named 'David Miller' with email 'david@example.com'.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["customers"],
+        "keys": ["customers.email (UNIQUE)"],
+        "dependency_order": "Direct INSERT into customers",
+        "risks": "Will fail if email already exists due to UNIQUE constraint"
+      },
+      "action": "write",
+      "sql": "INSERT INTO customers (name, email) VALUES ('David Miller', 'david@example.com');",
+      "explanation": "Inserts a new customer record into the customers table."
+    }
+  },
+  {
+    "request": "Mark order #3 as shipped.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders"],
+        "keys": ["orders.id (PK)"],
+        "dependency_order": "Direct UPDATE targeting specific primary key",
+        "risks": "Modifies order state; constrained to single row via primary key"
+      },
+      "action": "write",
+      "sql": "UPDATE orders SET status = 'shipped' WHERE id = 3;",
+      "explanation": "Updates status to 'shipped' for order with id = 3."
+    }
+  },
+  {
+    "request": "Add a foreign key constraint from orders.customer_id referencing customers(id).",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders", "customers"],
+        "keys": ["orders.customer_id -> customers.id"],
+        "dependency_order": "PRAGMA foreign_keys = OFF -> BEGIN TRANSACTION -> CREATE orders_new with FK -> COPY data -> DROP orders -> RENAME orders_new TO orders -> CREATE INDEX -> COMMIT -> PRAGMA foreign_keys = ON",
+        "risks": "SQLite cannot ALTER TABLE ADD FOREIGN KEY directly. Must recreate table within transaction and re-enable FKs."
+      },
+      "action": "relationship",
+      "sql": "PRAGMA foreign_keys = OFF;\nBEGIN TRANSACTION;\nCREATE TABLE orders_new (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    customer_id INTEGER NOT NULL,\n    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    status TEXT NOT NULL DEFAULT 'pending',\n    total_amount REAL NOT NULL,\n    FOREIGN KEY (customer_id) REFERENCES customers(id)\n);\nINSERT INTO orders_new SELECT id, customer_id, order_date, status, total_amount FROM orders;\nDROP TABLE orders;\nALTER TABLE orders_new RENAME TO orders;\nCREATE INDEX ix_orders_customer_id ON orders(customer_id);\nCOMMIT;\nPRAGMA foreign_keys = ON;",
+      "explanation": "SQLite does not support ALTER TABLE ADD FOREIGN KEY. The table-recreate pattern is required: disable FK pragma, create orders_new with the FK constraint, migrate data, swap table names, recreate indexes, and re-enable FKs."
+    }
+  },
+  {
+    "request": "Create a one-to-one relationship between users and user_profiles on user_id.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["user_profiles", "users"],
+        "keys": ["user_profiles.user_id -> users.id (FK + UNIQUE)"],
+        "dependency_order": "PRAGMA foreign_keys = OFF -> CREATE user_profiles_new with FK and UNIQUE -> COPY data -> DROP user_profiles -> RENAME -> RECREATE INDEXES -> PRAGMA foreign_keys = ON",
+        "risks": "One-to-one constraint requires both foreign key and UNIQUE constraint on the child key."
+      },
+      "action": "relationship",
+      "sql": "PRAGMA foreign_keys = OFF;\nBEGIN TRANSACTION;\nCREATE TABLE user_profiles_new (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    user_id INTEGER NOT NULL UNIQUE,\n    bio TEXT,\n    avatar_url TEXT,\n    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE\n);\nINSERT INTO user_profiles_new (id, user_id, bio, avatar_url) SELECT id, user_id, bio, avatar_url FROM user_profiles;\nDROP TABLE user_profiles;\nALTER TABLE user_profiles_new RENAME TO user_profiles;\nCREATE UNIQUE INDEX ix_user_profiles_user_id ON user_profiles(user_id);\nCOMMIT;\nPRAGMA foreign_keys = ON;",
+      "explanation": "Creates a One-to-One relationship by recreating user_profiles with both a foreign key pointing to users(id) and a UNIQUE constraint on user_id."
+    }
+  },
+  {
+    "request": "Create a many-to-many relationship between products and categories using a product_categories join table.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["products", "categories", "product_categories"],
+        "keys": ["product_categories.product_id -> products.id", "product_categories.category_id -> categories.id"],
+        "dependency_order": "CREATE TABLE product_categories join table with composite PK and foreign keys -> CREATE indexes on foreign key columns",
+        "risks": "Many-to-many relationships require a junction table with cascading foreign keys."
+      },
+      "action": "relationship",
+      "sql": "CREATE TABLE product_categories (\n    product_id INTEGER NOT NULL,\n    category_id INTEGER NOT NULL,\n    PRIMARY KEY (product_id, category_id),\n    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,\n    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE\n);\nCREATE INDEX idx_product_categories_product_id ON product_categories(product_id);\nCREATE INDEX idx_product_categories_category_id ON product_categories(category_id);",
+      "explanation": "Creates a Many-to-Many junction table 'product_categories' with composite primary key, cascading foreign keys to both parent tables, and lookup indexes."
+    }
+  },
+  {
+    "request": "Find all orphan orders whose customer_id does not exist in customers.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders", "customers"],
+        "keys": ["orders.customer_id", "customers.id"],
+        "dependency_order": "LEFT JOIN orders with customers WHERE customers.id IS NULL",
+        "risks": "Read-only relationship validation query."
+      },
+      "action": "query",
+      "sql": "SELECT o.id, o.customer_id, o.order_date, o.total_amount FROM orders o LEFT JOIN customers c ON o.customer_id = c.id WHERE o.customer_id IS NOT NULL AND c.id IS NULL;",
+      "explanation": "Finds orphan rows in orders where customer_id is populated but has no matching row in customers."
+    }
+  },
+  {
+    "request": "Create a read-only database user named 'analyst' with password 'secret123'.",
+    "response": {
+      "reasoning": {
+        "tables_involved": [],
+        "keys": [],
+        "dependency_order": "None",
+        "risks": "Unsupported dialect feature: SQLite has no user management system."
+      },
+      "action": "create_user",
+      "sql": "",
+      "explanation": "SQLite is a serverless, file-based database and does not support database users, passwords, or GRANT/REVOKE permissions. Access control is managed at the filesystem level."
+    }
+  },
+  {
+    "request": "Generate 3 synthetic product rows for testing.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["products"],
+        "keys": ["products.id (AUTOINCREMENT)"],
+        "dependency_order": "INSERT into products table",
+        "risks": "Increases row count in development database"
+      },
+      "action": "fake_data",
+      "sql": "INSERT INTO products (name, price, stock) VALUES ('Noise Cancelling Headphones', 199.99, 25), ('Wireless Ergonomic Keyboard', 89.50, 40), ('USB-C Hub Multiport', 34.99, 100);",
+      "explanation": "Generates 3 synthetic product records with realistic values."
+    }
+  },
+  {
+    "request": "Drop all database tables and erase all data without confirmation.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["customers", "products", "orders", "order_items"],
+        "keys": ["all"],
+        "dependency_order": "Blocked",
+        "risks": "Catastrophic destructive operation; violates DevDB development safety policies."
+      },
+      "action": "write",
+      "sql": "",
+      "explanation": "REFUSED: Blanket DROP operations across all tables without confirmation are blocked by DevDB safety guardrails. Destructive queries require explicit table targeting."
+    }
+  }
+]

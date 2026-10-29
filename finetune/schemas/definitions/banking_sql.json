@@ -1,0 +1,178 @@
+{
+  "db_type": "postgres",
+  "has_foreign_keys": true,
+  "description": "Financial core system with bank customers, accounts, cards, and transactions",
+  "tables": {
+    "customers": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "customer_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "tax_id",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "email",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "accounts": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "customer_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "account_type",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "balance",
+          "type": "REAL",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "currency",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_acct_cust",
+          "constrained_columns": [
+            "customer_id"
+          ],
+          "referred_table": "customers",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    },
+    "transactions": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "account_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "amount",
+          "type": "REAL",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "trans_type",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "timestamp",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_trans_acct",
+          "constrained_columns": [
+            "account_id"
+          ],
+          "referred_table": "accounts",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    },
+    "cards": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "account_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "card_number",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "expiration_date",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "is_active",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_cards_acct",
+          "constrained_columns": [
+            "account_id"
+          ],
+          "referred_table": "accounts",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    }
+  }
+}

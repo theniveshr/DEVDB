@@ -1,0 +1,256 @@
+{
+  "db_type": "sqlite",
+  "has_foreign_keys": true,
+  "description": "Online retail store with products, shoppers, purchase orders, purchase items, and store reviews",
+  "tables": {
+    "shoppers": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "full_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "email_address",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "billing_city",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": true
+        },
+        {
+          "name": "joined_at",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {
+          "name": "idx_shopper_email",
+          "column_names": [
+            "email_address"
+          ],
+          "unique": true
+        }
+      ]
+    },
+    "inventory_items": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "product_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "item_category",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "retail_price",
+          "type": "REAL",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "available_stock",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "purchase_orders": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "shopper_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "order_timestamp",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "fulfillment_status",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "invoice_total",
+          "type": "REAL",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_orders_shopper",
+          "constrained_columns": [
+            "shopper_id"
+          ],
+          "referred_table": "shoppers",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_orders_shopper",
+          "column_names": [
+            "shopper_id"
+          ],
+          "unique": false
+        }
+      ]
+    },
+    "purchase_lines": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "purchase_order_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "item_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "item_quantity",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "sale_price",
+          "type": "REAL",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_lines_order",
+          "constrained_columns": [
+            "purchase_order_id"
+          ],
+          "referred_table": "purchase_orders",
+          "referred_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_lines_item",
+          "constrained_columns": [
+            "item_id"
+          ],
+          "referred_table": "inventory_items",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    },
+    "store_reviews": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "item_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "shopper_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "star_rating",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "feedback_text",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": true
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_reviews_item",
+          "constrained_columns": [
+            "item_id"
+          ],
+          "referred_table": "inventory_items",
+          "referred_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_reviews_shopper",
+          "constrained_columns": [
+            "shopper_id"
+          ],
+          "referred_table": "shoppers",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    }
+  }
+}

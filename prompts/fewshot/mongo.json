@@ -1,0 +1,212 @@
+[
+  {
+    "request": "Find all pending orders",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["orders"],
+        "keys": ["orders.status"],
+        "pipeline_stages": [],
+        "risks": "None; read-only query"
+      },
+      "operation": "find",
+      "collection": "orders",
+      "filter": { "status": "pending" },
+      "projection": {},
+      "limit": 50,
+      "explanation": "Query all documents in collection 'orders' where status is 'pending'."
+    }
+  },
+  {
+    "request": "Show customers from Chennai",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["customers"],
+        "keys": ["customers.city"],
+        "pipeline_stages": [],
+        "risks": "None; read-only query"
+      },
+      "operation": "find",
+      "collection": "customers",
+      "filter": { "city": "Chennai" },
+      "projection": {},
+      "limit": 50,
+      "explanation": "Query customers residing in Chennai."
+    }
+  },
+  {
+    "request": "Count completed orders",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["orders"],
+        "keys": ["orders.status"],
+        "pipeline_stages": [],
+        "risks": "None; read-only count"
+      },
+      "operation": "count",
+      "collection": "orders",
+      "filter": { "status": "completed" },
+      "explanation": "Count orders with status equal to 'completed'."
+    }
+  },
+  {
+    "request": "Calculate total order amount grouped by status",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["orders"],
+        "keys": ["orders.status", "orders.total_amount"],
+        "pipeline_stages": ["$group"],
+        "risks": "None; analytical aggregation"
+      },
+      "operation": "aggregate",
+      "collection": "orders",
+      "pipeline": [
+        {
+          "$group": {
+            "_id": "$status",
+            "totalRevenue": { "$sum": "$total_amount" },
+            "orderCount": { "$sum": 1 }
+          }
+        }
+      ],
+      "explanation": "Aggregate orders by grouping on status to sum total_amount and count orders."
+    }
+  },
+  {
+    "request": "Join orders with customer details using customer_id",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["orders", "customers"],
+        "keys": ["orders.customer_id", "customers._id"],
+        "pipeline_stages": ["$lookup"],
+        "risks": "None; read-only cross-collection lookup"
+      },
+      "operation": "aggregate",
+      "collection": "orders",
+      "pipeline": [
+        {
+          "$lookup": {
+            "from": "customers",
+            "localField": "customer_id",
+            "foreignField": "_id",
+            "as": "customer_info"
+          }
+        },
+        { "$unwind": { "path": "$customer_info", "preserveNullAndEmptyArrays": true } },
+        { "$limit": 20 }
+      ],
+      "explanation": "Perform $lookup join matching orders.customer_id to customers._id."
+    }
+  },
+  {
+    "request": "Add 30 fake customers with Indian names",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["customers"],
+        "keys": ["customers.name", "customers.email", "customers.city"],
+        "pipeline_stages": [],
+        "risks": "Data insertion in development environment"
+      },
+      "operation": "insert_fake",
+      "collection": "customers",
+      "count": 30,
+      "locale": "en_IN",
+      "columns": {
+        "name": "faker:name",
+        "email": "faker:email",
+        "city": "choice:Chennai,Bengaluru,Hyderabad,Mumbai,Delhi,Pune",
+        "phone": "faker:phone_number",
+        "tier": "choice:bronze,silver,gold,platinum",
+        "created_at": "faker:date_time_this_year"
+      },
+      "explanation": "Generate and batch-insert 30 realistic Indian customer documents using en_IN locale."
+    }
+  },
+  {
+    "request": "Link orders to customers by matching customer_email to email",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["orders", "customers"],
+        "keys": ["orders.customer_email", "customers.email"],
+        "pipeline_stages": [],
+        "risks": "Batch update to write foreign reference customer_id"
+      },
+      "operation": "add_reference",
+      "child_collection": "orders",
+      "child_field": "customer_email",
+      "parent_collection": "customers",
+      "parent_field": "email",
+      "ref_field": "customer_id",
+      "explanation": "Update orders documents by finding matching customer email and setting customer_id."
+    }
+  },
+  {
+    "request": "Create an index on orders customer_id",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["orders"],
+        "keys": ["orders.customer_id"],
+        "pipeline_stages": [],
+        "risks": "Schema DDL modification"
+      },
+      "operation": "create_index",
+      "collection": "orders",
+      "keys": { "customer_id": 1 },
+      "unique": false,
+      "explanation": "Create ascending index on orders.customer_id to optimize foreign key queries."
+    }
+  },
+  {
+    "request": "Create a read-only user report_user",
+    "response": {
+      "reasoning": {
+        "collections_involved": [],
+        "keys": [],
+        "pipeline_stages": [],
+        "risks": "Security user management"
+      },
+      "operation": "create_user",
+      "username": "report_user",
+      "roles": [{ "role": "read", "db": "devdb" }],
+      "explanation": "Create user report_user with read-only privileges on devdb database."
+    }
+  },
+  {
+    "request": "drop the database",
+    "response": {
+      "reasoning": {
+        "collections_involved": [],
+        "keys": [],
+        "pipeline_stages": [],
+        "risks": "Catastrophic destructive request; dropDatabase is strictly blocked by DevDB safety rules"
+      },
+      "operation": "dropDatabase",
+      "explanation": "Refused: dropDatabase is permanently forbidden by DevDB safety guardrails."
+    }
+  },
+  {
+    "request": "Show relationships between collections",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["orders", "customers", "products"],
+        "keys": ["orders.customer_id"],
+        "pipeline_stages": [],
+        "risks": "None; inspection"
+      },
+      "operation": "show_relationships",
+      "explanation": "Render ASCII relationship chain map and Rich document tree."
+    }
+  },
+  {
+    "request": "Validate relationship integrity and find broken links",
+    "response": {
+      "reasoning": {
+        "collections_involved": ["orders", "customers"],
+        "keys": ["orders.customer_id"],
+        "pipeline_stages": [],
+        "risks": "None; read-only integrity audit"
+      },
+      "operation": "validate_relationships",
+      "explanation": "Scan collections for orphan references and missing foreign key indexes."
+    }
+  }
+]

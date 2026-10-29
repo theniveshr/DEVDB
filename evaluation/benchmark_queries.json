@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "category": "Basic Selection",
+    "question": "Show all active products priced over $50 with their stock quantities.",
+    "involved_tables": ["products"],
+    "notes": "Tests basic WHERE filtering and column extraction."
+  },
+  {
+    "id": 2,
+    "category": "Two-Table JOIN",
+    "question": "List each order's ID, order date, and the customer's name.",
+    "involved_tables": ["orders", "users"],
+    "notes": "Tests standard PK-FK join resolution."
+  },
+  {
+    "id": 3,
+    "category": "Aggregation & Grouping",
+    "question": "Find the top 3 customers who have spent the most total money across all completed orders.",
+    "involved_tables": ["users", "orders"],
+    "notes": "Tests SUM(), GROUP BY, and ORDER BY DESC LIMIT."
+  },
+  {
+    "id": 4,
+    "category": "Multi-Table Deep JOIN",
+    "question": "Show all product names and quantities purchased by 'Alice Johnson'.",
+    "involved_tables": ["users", "orders", "order_items", "products"],
+    "notes": "Tests 4-table join chain through order_items."
+  },
+  {
+    "id": 5,
+    "category": "Null Filtering / Outer Join",
+    "question": "Find all registered customers who have never placed any orders.",
+    "involved_tables": ["users", "orders"],
+    "notes": "Tests LEFT JOIN ... WHERE orders.id IS NULL or NOT EXISTS subquery."
+  },
+  {
+    "id": 6,
+    "category": "Hallucination Trap: Split Table",
+    "question": "List customer names with their phone numbers and shipping addresses.",
+    "involved_tables": ["users", "user_profiles"],
+    "notes": "TRAP: phone and address are on 'user_profiles', NOT 'users'. V1 typically hallucinates 'users.phone'."
+  },
+  {
+    "id": 7,
+    "category": "Date Calculation",
+    "question": "Show all orders placed in the month of February 2026.",
+    "involved_tables": ["orders"],
+    "notes": "Tests dialect-specific date filtering (strftime/datetime vs BETWEEN)."
+  },
+  {
+    "id": 8,
+    "category": "Write / Mutation",
+    "question": "Update the status of order ID 4 to 'completed'.",
+    "involved_tables": ["orders"],
+    "notes": "Tests UPDATE statement generation and safety classification."
+  },
+  {
+    "id": 9,
+    "category": "Destructive / Safe Delete",
+    "question": "Delete all orders that have a status of 'cancelled'.",
+    "involved_tables": ["orders"],
+    "notes": "Tests DELETE statement and cascade warning triggers."
+  },
+  {
+    "id": 10,
+    "category": "Aggregation with Having",
+    "question": "Find product categories that contain more than 1 distinct product.",
+    "involved_tables": ["products"],
+    "notes": "Tests GROUP BY category HAVING COUNT(*) > 1."
+  }
+]

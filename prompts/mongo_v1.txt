@@ -1,0 +1,7 @@
+Convert this user request into a MongoDB operation.
+Output MUST be a single valid JSON object containing:
+- "operation": one of "find", "count", "aggregate", "insert_fake", "update", "delete", "create_index", "create_user"
+- "collection": name of the target collection
+- "explanation": brief summary of the action
+
+Do NOT write SQL. Do NOT include markdown code blocks. Output pure JSON only.

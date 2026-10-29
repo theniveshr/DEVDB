@@ -1,0 +1,165 @@
+{
+  "db_type": "sqlite",
+  "has_foreign_keys": true,
+  "description": "Hotel property management with guests, rooms, reservations, payments, and amenities",
+  "tables": {
+    "guests": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "guest_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "email",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "country",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": true
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "rooms": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "room_number",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "room_type",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "nightly_rate",
+          "type": "REAL",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "bookings": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "guest_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "room_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "check_in",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "check_out",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_book_guest",
+          "constrained_columns": [
+            "guest_id"
+          ],
+          "referred_table": "guests",
+          "referred_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_book_room",
+          "constrained_columns": [
+            "room_id"
+          ],
+          "referred_table": "rooms",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    },
+    "payments": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "booking_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "amount",
+          "type": "REAL",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "payment_method",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_pay_book",
+          "constrained_columns": [
+            "booking_id"
+          ],
+          "referred_table": "bookings",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    }
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "db_type": "postgres",
+  "has_foreign_keys": true,
+  "description": "Hospital patient records, doctors, departments, appointments, and prescriptions",
+  "tables": {
+    "departments": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "dept_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "floor",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "doctors": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "doctor_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "specialty",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "dept_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_doc_dept",
+          "constrained_columns": [
+            "dept_id"
+          ],
+          "referred_table": "departments",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    },
+    "patients": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "patient_name",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "blood_type",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": true
+        },
+        {
+          "name": "birth_date",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "phone",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": true
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": []
+    },
+    "appointments": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "patient_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "doctor_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "appointment_date",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "diagnosis",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": true
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_appt_patient",
+          "constrained_columns": [
+            "patient_id"
+          ],
+          "referred_table": "patients",
+          "referred_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "fk_appt_doctor",
+          "constrained_columns": [
+            "doctor_id"
+          ],
+          "referred_table": "doctors",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    },
+    "medical_records": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "primary_key": true,
+          "nullable": false
+        },
+        {
+          "name": "patient_id",
+          "type": "INTEGER",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "condition",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": false
+        },
+        {
+          "name": "treatment",
+          "type": "TEXT",
+          "primary_key": false,
+          "nullable": true
+        },
+        {
+          "name": "recorded_at",
+          "type": "TIMESTAMP",
+          "primary_key": false,
+          "nullable": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_med_patient",
+          "constrained_columns": [
+            "patient_id"
+          ],
+          "referred_table": "patients",
+          "referred_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": []
+    }
+  }
+}

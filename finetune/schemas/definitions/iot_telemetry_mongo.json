@@ -1,0 +1,62 @@
+{
+  "db_type": "mongodb",
+  "description": "Smart sensor network with devices, telemetry time-series points, and battery health",
+  "tables": {
+    "devices": {
+      "doc_count": 30,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "device_uuid",
+          "type": "string"
+        },
+        {
+          "name": "model",
+          "type": "string"
+        },
+        {
+          "name": "firmware_version",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        }
+      ]
+    },
+    "telemetry_events": {
+      "doc_count": 500,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "device_uuid",
+          "type": "string"
+        },
+        {
+          "name": "temperature_c",
+          "type": "double"
+        },
+        {
+          "name": "humidity_pct",
+          "type": "double"
+        },
+        {
+          "name": "battery_level",
+          "type": "int"
+        },
+        {
+          "name": "timestamp",
+          "type": "date"
+        }
+      ]
+    }
+  }
+}

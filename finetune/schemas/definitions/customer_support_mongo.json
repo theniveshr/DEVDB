@@ -1,0 +1,63 @@
+{
+  "db_type": "mongodb",
+  "description": "Customer service tickets, priority escalation, agent responses, and ratings",
+  "tables": {
+    "tickets": {
+      "doc_count": 90,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "subject",
+          "type": "string"
+        },
+        {
+          "name": "priority",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "name": "customer_email",
+          "type": "string"
+        },
+        {
+          "name": "messages",
+          "type": "array[object]",
+          "is_embedded": true
+        },
+        {
+          "name": "created_at",
+          "type": "date"
+        }
+      ]
+    },
+    "agents": {
+      "doc_count": 12,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "agent_name",
+          "type": "string"
+        },
+        {
+          "name": "tier",
+          "type": "string"
+        },
+        {
+          "name": "active_tickets",
+          "type": "int"
+        }
+      ]
+    }
+  }
+}

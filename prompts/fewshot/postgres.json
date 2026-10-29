@@ -1,0 +1,222 @@
+[
+  {
+    "request": "Find all completed orders along with customer names and order dates.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders", "customers"],
+        "keys": ["orders.customer_id", "customers.id"],
+        "dependency_order": "Join orders and customers on customer_id",
+        "risks": "None; read-only SELECT query"
+      },
+      "action": "query",
+      "sql": "SELECT o.id, c.name AS customer_name, o.order_date, o.total_amount FROM orders o JOIN customers c ON o.customer_id = c.id WHERE o.status = 'completed';",
+      "explanation": "Joins orders and customers on customer_id to return completed orders."
+    }
+  },
+  {
+    "request": "Find the total amount spent by each customer and rank them by total spending.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["customers", "orders"],
+        "keys": ["customers.id", "orders.customer_id"],
+        "dependency_order": "Join customers and orders, aggregate sum, compute DENSE_RANK window function",
+        "risks": "None; read-only window aggregation query"
+      },
+      "action": "query",
+      "sql": "SELECT c.id, c.name, SUM(o.total_amount) AS total_spent, DENSE_RANK() OVER (ORDER BY SUM(o.total_amount) DESC) AS spending_rank FROM customers c JOIN orders o ON c.id = o.customer_id GROUP BY c.id, c.name;",
+      "explanation": "Computes customer spending totals and uses PostgreSQL DENSE_RANK() to rank customers."
+    }
+  },
+  {
+    "request": "Add a new customer 'David Miller' with email 'david@example.com' and return the generated ID.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["customers"],
+        "keys": ["customers.id (SERIAL/IDENTITY)", "customers.email (UNIQUE)"],
+        "dependency_order": "INSERT into customers with RETURNING clause",
+        "risks": "Will fail if email already exists due to unique constraint"
+      },
+      "action": "write",
+      "sql": "INSERT INTO customers (name, email) VALUES ('David Miller', 'david@example.com') RETURNING id, name, created_at;",
+      "explanation": "Inserts new customer record and uses PostgreSQL RETURNING clause to yield generated ID."
+    }
+  },
+  {
+    "request": "Mark order #3 as shipped.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders"],
+        "keys": ["orders.id (PK)"],
+        "dependency_order": "UPDATE on specific primary key",
+        "risks": "Targeted update modifying status for a single order"
+      },
+      "action": "write",
+      "sql": "UPDATE orders SET status = 'shipped' WHERE id = 3;",
+      "explanation": "Updates order status to shipped for primary key id = 3."
+    }
+  },
+  {
+    "request": "Add a foreign key constraint from orders.customer_id referencing customers(id).",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders", "customers"],
+        "keys": ["orders.customer_id -> customers.id"],
+        "dependency_order": "ALTER TABLE orders ADD CONSTRAINT fk_orders_customer FOREIGN KEY",
+        "risks": "Will fail if there are orphan customer_id values in orders that do not exist in customers"
+      },
+      "action": "relationship",
+      "sql": "ALTER TABLE orders ADD CONSTRAINT fk_orders_customer FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT;",
+      "explanation": "PostgreSQL supports ALTER TABLE ADD CONSTRAINT directly. Adds referential integrity from orders to customers."
+    }
+  },
+  {
+    "request": "Create a one-to-one relationship between users and user_profiles on user_id.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["user_profiles", "users"],
+        "keys": ["user_profiles.user_id -> users.id (FK + UNIQUE)"],
+        "dependency_order": "ALTER TABLE user_profiles ADD FOREIGN KEY -> ALTER TABLE user_profiles ADD CONSTRAINT UNIQUE",
+        "risks": "Enforces single profile per user through foreign key and unique constraint."
+      },
+      "action": "relationship",
+      "sql": "ALTER TABLE user_profiles ADD CONSTRAINT fk_user_profiles_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;\nALTER TABLE user_profiles ADD CONSTRAINT uq_user_profiles_user_id UNIQUE (user_id);",
+      "explanation": "Creates a One-to-One relationship in PostgreSQL by adding both a foreign key constraint and a UNIQUE constraint on user_profiles.user_id."
+    }
+  },
+  {
+    "request": "Create a many-to-many relationship between products and categories using a product_categories join table.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["products", "categories", "product_categories"],
+        "keys": ["product_categories.product_id -> products.id", "product_categories.category_id -> categories.id"],
+        "dependency_order": "CREATE TABLE product_categories junction table with composite primary key and foreign keys",
+        "risks": "Creates junction table with cascading foreign keys."
+      },
+      "action": "relationship",
+      "sql": "CREATE TABLE product_categories (\n    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,\n    category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE CASCADE,\n    PRIMARY KEY (product_id, category_id)\n);\nCREATE INDEX idx_product_categories_product ON product_categories(product_id);\nCREATE INDEX idx_product_categories_category ON product_categories(category_id);",
+      "explanation": "Creates a Many-to-Many junction table 'product_categories' in PostgreSQL with composite primary key, cascading foreign keys, and indexes."
+    }
+  },
+  {
+    "request": "Find all orphan orders whose customer_id does not exist in customers.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders", "customers"],
+        "keys": ["orders.customer_id", "customers.id"],
+        "dependency_order": "LEFT JOIN orders with customers WHERE customers.id IS NULL",
+        "risks": "Read-only relationship validation query."
+      },
+      "action": "query",
+      "sql": "SELECT o.id, o.customer_id, o.order_date, o.total_amount FROM orders o LEFT JOIN customers c ON o.customer_id = c.id WHERE o.customer_id IS NOT NULL AND c.id IS NULL;",
+      "explanation": "Finds orphan rows in orders where customer_id is populated but has no matching row in customers."
+    }
+  },
+  {
+    "request": "Create a read-only user report_user for orders.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders"],
+        "keys": [],
+        "dependency_order": "CREATE USER -> GRANT USAGE ON SCHEMA public -> GRANT SELECT ON TABLE orders",
+        "risks": "Creates user account with restricted read-only permissions on orders table only"
+      },
+      "action": "create_user",
+      "operation": "create_user",
+      "username": "report_user",
+      "privileges": ["SELECT"],
+      "tables": ["orders"],
+      "explanation": "Creates PostgreSQL user 'report_user' with a strong generated password and grants SELECT access only on the orders table."
+    }
+  },
+  {
+    "request": "Grant read-write privileges on all tables to app_dev.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["all tables"],
+        "keys": [],
+        "dependency_order": "GRANT USAGE ON SCHEMA public -> GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES",
+        "risks": "Broad read-write access granted across all current and future public tables"
+      },
+      "action": "create_user",
+      "operation": "grant",
+      "username": "app_dev",
+      "privileges": ["SELECT", "INSERT", "UPDATE", "DELETE"],
+      "tables": ["ALL"],
+      "explanation": "Grants full read-write privileges (SELECT, INSERT, UPDATE, DELETE) across all public tables to user 'app_dev'."
+    }
+  },
+  {
+    "request": "Revoke all privileges on orders from report_user.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["orders"],
+        "keys": [],
+        "dependency_order": "REVOKE ALL ON TABLE orders FROM report_user",
+        "risks": "Removes table access for user report_user"
+      },
+      "action": "create_user",
+      "operation": "revoke",
+      "username": "report_user",
+      "privileges": ["ALL"],
+      "tables": ["orders"],
+      "explanation": "Revokes all granted permissions on the orders table from user 'report_user'."
+    }
+  },
+  {
+    "request": "List all database users and their granted privileges.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["pg_roles", "information_schema.role_table_grants"],
+        "keys": [],
+        "dependency_order": "SELECT from pg_roles and information_schema",
+        "risks": "Read-only inspection of database roles and granted permissions"
+      },
+      "action": "create_user",
+      "operation": "list",
+      "explanation": "Queries PostgreSQL system catalogs to list all non-system users, login capabilities, and public table privileges."
+    }
+  },
+  {
+    "request": "Drop user report_user.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["pg_roles"],
+        "keys": [],
+        "dependency_order": "REASSIGN OWNED -> DROP OWNED -> DROP USER",
+        "risks": "Permanently deletes user role from database after cleaning up ownership"
+      },
+      "action": "create_user",
+      "operation": "drop_user",
+      "username": "report_user",
+      "explanation": "Safely reassigns and drops any objects owned by 'report_user', then drops the user account."
+    }
+  },
+  {
+    "request": "Generate 3 synthetic product rows for testing.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["products"],
+        "keys": ["products.id"],
+        "dependency_order": "Batch INSERT into products",
+        "risks": "Increases row count in development database"
+      },
+      "action": "fake_data",
+      "sql": "INSERT INTO products (name, price, stock) VALUES ('Noise Cancelling Headphones', 199.99, 25), ('Wireless Ergonomic Keyboard', 89.50, 40), ('USB-C Hub Multiport', 34.99, 100);",
+      "explanation": "Generates 3 synthetic product records with realistic values."
+    }
+  },
+  {
+    "request": "Drop all database tables and erase all data without confirmation.",
+    "response": {
+      "reasoning": {
+        "tables_involved": ["all tables"],
+        "keys": ["all"],
+        "dependency_order": "Blocked",
+        "risks": "Catastrophic data loss; violates DevDB development safety policies."
+      },
+      "action": "write",
+      "sql": "",
+      "explanation": "REFUSED: Blanket DROP operations across all tables without confirmation are blocked by DevDB safety guardrails. Destructive queries require explicit table targeting."
+    }
+  }
+]

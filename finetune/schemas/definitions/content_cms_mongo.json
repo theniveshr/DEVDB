@@ -1,0 +1,62 @@
+{
+  "db_type": "mongodb",
+  "description": "Content publishing platform with articles, revisions, taxonomies, and authors",
+  "tables": {
+    "articles": {
+      "doc_count": 60,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "slug",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "name": "view_count",
+          "type": "int"
+        },
+        {
+          "name": "categories",
+          "type": "array[string]"
+        },
+        {
+          "name": "published_at",
+          "type": "date"
+        }
+      ]
+    },
+    "authors": {
+      "doc_count": 15,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "author_name",
+          "type": "string"
+        },
+        {
+          "name": "twitter_handle",
+          "type": "string"
+        },
+        {
+          "name": "article_count",
+          "type": "int"
+        }
+      ]
+    }
+  }
+}

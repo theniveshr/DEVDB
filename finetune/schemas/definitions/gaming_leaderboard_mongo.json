@@ -1,0 +1,59 @@
+{
+  "db_type": "mongodb",
+  "description": "Multiplayer game statistics, character loadouts, matches, and ranks",
+  "tables": {
+    "players": {
+      "doc_count": 80,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "gamer_tag",
+          "type": "string"
+        },
+        {
+          "name": "level",
+          "type": "int"
+        },
+        {
+          "name": "mmr_rating",
+          "type": "int"
+        },
+        {
+          "name": "unlocked_skins",
+          "type": "array[string]"
+        }
+      ]
+    },
+    "matches": {
+      "doc_count": 250,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "match_mode",
+          "type": "string"
+        },
+        {
+          "name": "duration_sec",
+          "type": "int"
+        },
+        {
+          "name": "winner_id",
+          "type": "ObjectId"
+        },
+        {
+          "name": "player_scores",
+          "type": "array[object]",
+          "is_embedded": true
+        }
+      ]
+    }
+  }
+}

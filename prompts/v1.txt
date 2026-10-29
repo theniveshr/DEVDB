@@ -1,0 +1,11 @@
+Convert this request to SQL.
+
+Return ONLY a JSON object with this exact structure:
+{
+  "action": "<action>",
+  "sql": "<sql>",
+  "explanation": "<explanation>"
+}
+
+The action MUST be one of: "query", "write", "fake_data", "create_user", "relationship".
+Do NOT output markdown fences, commentary, or any text other than the JSON object.

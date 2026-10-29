@@ -1,0 +1,63 @@
+{
+  "db_type": "mongodb",
+  "description": "Supply chain shipment milestones, transit checkpoints, and courier assignments",
+  "tables": {
+    "shipments": {
+      "doc_count": 100,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "tracking_code",
+          "type": "string"
+        },
+        {
+          "name": "origin_hub",
+          "type": "string"
+        },
+        {
+          "name": "destination_hub",
+          "type": "string"
+        },
+        {
+          "name": "current_status",
+          "type": "string"
+        },
+        {
+          "name": "checkpoints",
+          "type": "array[object]",
+          "is_embedded": true
+        },
+        {
+          "name": "estimated_delivery",
+          "type": "date"
+        }
+      ]
+    },
+    "couriers": {
+      "doc_count": 25,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "courier_name",
+          "type": "string"
+        },
+        {
+          "name": "active_vehicle",
+          "type": "string"
+        },
+        {
+          "name": "assigned_packages",
+          "type": "int"
+        }
+      ]
+    }
+  }
+}

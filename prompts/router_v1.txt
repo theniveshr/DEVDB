@@ -1,0 +1,21 @@
+Classify the user's database request into exactly one of these intents:
+- explore: list tables/collections, describe schema, count, sample data, stats, indexes
+- query: SELECT/find queries, filters, joins, aggregations
+- insert: add a specific single record or row manually
+- fake_data: generate synthetic mock data using Faker
+- update: modify existing records
+- delete: remove records
+- schema: DDL, create/alter/drop table, add column, create/drop index
+- relationships: foreign keys, link tables, relationship maps, orphan check
+- users: create database users, grant/revoke roles, list/drop users
+- data_io: export to CSV/JSON, import from CSV/JSON, backup/restore
+- copy: copy table/collection across database connections
+- connection: connect, switch profile, save profile, list profiles, change mode
+- help: capability list, what can you do
+- unknown: ambiguous or non-existent entity, ask clarifying question
+
+Output pure JSON:
+{
+  "intent": "<intent_name>",
+  "params": {}
+}

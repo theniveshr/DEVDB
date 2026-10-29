@@ -1,0 +1,71 @@
+{
+  "db_type": "mongodb",
+  "description": "User profiles, dynamic social posts, nested comments, and tags",
+  "tables": {
+    "users": {
+      "doc_count": 50,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "bio",
+          "type": "string"
+        },
+        {
+          "name": "follower_count",
+          "type": "int"
+        },
+        {
+          "name": "interests",
+          "type": "array[string]"
+        }
+      ]
+    },
+    "posts": {
+      "doc_count": 120,
+      "columns": [
+        {
+          "name": "_id",
+          "type": "ObjectId",
+          "primary_key": true
+        },
+        {
+          "name": "author_id",
+          "type": "ObjectId"
+        },
+        {
+          "name": "content",
+          "type": "string"
+        },
+        {
+          "name": "likes_count",
+          "type": "int"
+        },
+        {
+          "name": "tags",
+          "type": "array[string]"
+        },
+        {
+          "name": "comments",
+          "type": "array[object]",
+          "is_embedded": true
+        },
+        {
+          "name": "created_at",
+          "type": "date"
+        }
+      ]
+    }
+  }
+}
